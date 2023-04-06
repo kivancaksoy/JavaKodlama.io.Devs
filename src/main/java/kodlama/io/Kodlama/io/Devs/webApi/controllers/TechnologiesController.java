@@ -3,17 +3,24 @@ package kodlama.io.Kodlama.io.Devs.webApi.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import kodlama.io.Kodlama.io.Devs.business.abstracts.TechnologyService;
 import kodlama.io.Kodlama.io.Devs.business.requests.CreateTechnologyRequest;
-import kodlama.io.Kodlama.io.Devs.business.requests.DeleteTechnologyRequest;
 import kodlama.io.Kodlama.io.Devs.business.requests.UpdateTechnologyRequest;
+import kodlama.io.Kodlama.io.Devs.business.responses.CreatedTechnologyResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.GetAllTechnologiesResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.GetByIdTechnologyResponse;
+import kodlama.io.Kodlama.io.Devs.business.responses.UpdatedTechnologyResponse;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -25,29 +32,38 @@ public class TechnologiesController {
 	private TechnologyService technologyService;
 	
 	@GetMapping("/getall")
+	@ResponseStatus(code=HttpStatus.OK)
 	public List<GetAllTechnologiesResponse> getAll(){
 		List<GetAllTechnologiesResponse> result = technologyService.getAll();
 		return result;
 	}
 	
 	@GetMapping("/getbyid")
-	public GetByIdTechnologyResponse getById(int id){
+	@ResponseStatus(code=HttpStatus.OK)
+	public GetByIdTechnologyResponse getById(@PathVariable int id){
 		GetByIdTechnologyResponse result = technologyService.getById(id);
 		return result;
 	}
 	
 	@PostMapping("/add")
-	public void add(CreateTechnologyRequest createTechnologyRequest){
-		technologyService.add(createTechnologyRequest);
+	@ResponseStatus(code=HttpStatus.CREATED)
+	public CreatedTechnologyResponse add(@RequestBody CreateTechnologyRequest createTechnologyRequest){
+		CreatedTechnologyResponse result =
+				technologyService.add(createTechnologyRequest);
+		return result;
 	}
 	
-	@PostMapping("/update")
-	public void update(UpdateTechnologyRequest updateTechnologyRequest){
-		technologyService.update(updateTechnologyRequest);
+	@PutMapping("/update")
+	@ResponseStatus(code=HttpStatus.OK)
+	public UpdatedTechnologyResponse update(@RequestBody UpdateTechnologyRequest updateTechnologyRequest){
+		UpdatedTechnologyResponse result =
+				technologyService.update(updateTechnologyRequest);
+		return result;
 	}
 	
-	@PostMapping("/delete")
-	public void delete(DeleteTechnologyRequest deleteTechnologyRequest){
-		technologyService.delete(deleteTechnologyRequest);
+	@DeleteMapping("/delete")
+	@ResponseStatus(code=HttpStatus.OK)
+	public void delete(@PathVariable int id){
+		technologyService.delete(id);
 	}
 }

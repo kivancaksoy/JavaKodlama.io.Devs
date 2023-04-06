@@ -28,7 +28,7 @@ public class ProgrammingLanguage {
 	@Column(name="name")
 	private String name;
 	
-	@OneToMany(mappedBy = "programmingLanguage", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "programmingLanguage", cascade = CascadeType.ALL)// hatadan ötürü , orphanRemoval = true silinmiştir.
 	private List<Technology> technologies;
 	
 }

@@ -1,17 +1,17 @@
 package kodlama.io.Kodlama.io.Devs.business.concretes;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import kodlama.io.Kodlama.io.Devs.business.abstracts.ProgrammingLanguageService;
 import kodlama.io.Kodlama.io.Devs.business.requests.CreateProgrammingLanguageRequest;
-import kodlama.io.Kodlama.io.Devs.business.requests.DeleteProgrammingLanguageRequest;
 import kodlama.io.Kodlama.io.Devs.business.requests.UpdateProgrammingLanguageRequest;
+import kodlama.io.Kodlama.io.Devs.business.responses.CreatedProgrammingLanguageResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.GetAllProgrammingLanguagesResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.GetByIdProgrammingLanguageResponse;
+import kodlama.io.Kodlama.io.Devs.business.responses.UpdatedProgrammingLanguageResponse;
+import kodlama.io.Kodlama.io.Devs.core.utilities.mapper.ModelMapperService;
 import kodlama.io.Kodlama.io.Devs.dataAccess.abstracts.ProgrammingLanguageRepository;
 import kodlama.io.Kodlama.io.Devs.entities.concretes.ProgrammingLanguage;
 import lombok.AllArgsConstructor;
@@ -21,34 +21,38 @@ import lombok.AllArgsConstructor;
 public class ProgrammingLanguageManager implements ProgrammingLanguageService {
 
 	private ProgrammingLanguageRepository programmingLanguageRepository;
+	private ModelMapperService modelMapperService;
 
 
 	@Override
-	public void add(CreateProgrammingLanguageRequest createProgrammingLanguageRequest) {
-		ProgrammingLanguage programmingLanguage = new ProgrammingLanguage();
-		programmingLanguage.setName(createProgrammingLanguageRequest.getName());
-		
-		programmingLanguageRepository.save(programmingLanguage);
+	public CreatedProgrammingLanguageResponse add(CreateProgrammingLanguageRequest createProgrammingLanguageRequest) {
+		ProgrammingLanguage programmingLanguage = 
+	    		modelMapperService.forRequest().map(createProgrammingLanguageRequest, ProgrammingLanguage.class);
+	    ProgrammingLanguage createdProgrammingLanguage =
+	    		programmingLanguageRepository.save(programmingLanguage);
+	    CreatedProgrammingLanguageResponse createdProgrammingLanguageResponse =
+	    		modelMapperService.forResponse().map(createdProgrammingLanguage, CreatedProgrammingLanguageResponse.class);
+	    
+	    return createdProgrammingLanguageResponse;
 		
 	}
 
 	@Override
-	public void delete(DeleteProgrammingLanguageRequest deleteProgrammingLanguageRequest) {
-		ProgrammingLanguage programmingLanguage = new ProgrammingLanguage();
-		programmingLanguage.setId(deleteProgrammingLanguageRequest.getId());
-		
-		programmingLanguageRepository.delete(programmingLanguage);
+	public void delete(int id) {
+		programmingLanguageRepository.deleteById(id);
 	}
 
 	@Override
-	public void update(UpdateProgrammingLanguageRequest updateProgrammingLanguageRequest) {
+	public UpdatedProgrammingLanguageResponse update(UpdateProgrammingLanguageRequest updateProgrammingLanguageRequest) {
 	    ProgrammingLanguage programmingLanguage = 
-	    		programmingLanguageRepository.findById(
-	    				updateProgrammingLanguageRequest.getId()).orElseThrow(() -> 
-	    				new RuntimeException("Programming language not found"));
-		programmingLanguage.setName(updateProgrammingLanguageRequest.getName());
+	    		modelMapperService.forRequest().map(updateProgrammingLanguageRequest, ProgrammingLanguage.class);
+	    ProgrammingLanguage updatedProgrammingLanguage =
+	    		programmingLanguageRepository.save(programmingLanguage);
+	    UpdatedProgrammingLanguageResponse updatedProgrammingLanguageResponse =
+	    		modelMapperService.forResponse().map(updatedProgrammingLanguage, UpdatedProgrammingLanguageResponse.class);
+	    
+	    return updatedProgrammingLanguageResponse;
 		
-		programmingLanguageRepository.save(programmingLanguage);
 	}
 
 	@Override
@@ -56,28 +60,23 @@ public class ProgrammingLanguageManager implements ProgrammingLanguageService {
 		List<ProgrammingLanguage> programmingLanguages =
 				programmingLanguageRepository.findAll();
 		List<GetAllProgrammingLanguagesResponse> getAllProgrammingLanguagesResponse =
-				new ArrayList<GetAllProgrammingLanguagesResponse>();
-		
-		for (ProgrammingLanguage programmingLanguage : programmingLanguages) {
-			GetAllProgrammingLanguagesResponse response = new GetAllProgrammingLanguagesResponse();
-			response.setId(programmingLanguage.getId());
-			response.setName(programmingLanguage.getName());
-			getAllProgrammingLanguagesResponse.add(response);
-		}
-		
+				programmingLanguages.stream().map(programmingLanguage ->
+					modelMapperService.forResponse()
+					.map(programmingLanguage, GetAllProgrammingLanguagesResponse.class))
+					.toList();
+			
 		return getAllProgrammingLanguagesResponse;
 	}
 
 	@Override
 	public GetByIdProgrammingLanguageResponse getById(int id) {
-		Optional<ProgrammingLanguage> programmingLanguage = 
-				programmingLanguageRepository.findById(id);
+		ProgrammingLanguage programmingLanguage =
+				programmingLanguageRepository.findById(id).orElseThrow(() ->
+						new RuntimeException("Programming language not found"));
+		GetByIdProgrammingLanguageResponse getByIdProgrammingLanguageResponse =
+				modelMapperService.forResponse().map(programmingLanguage, GetByIdProgrammingLanguageResponse.class);
 		
-		GetByIdProgrammingLanguageResponse response = new GetByIdProgrammingLanguageResponse();
-		response.setId(programmingLanguage.get().getId());
-		response.setName(programmingLanguage.get().getName());
-		
-		return response;
+		return  getByIdProgrammingLanguageResponse;
 	}
 
 	

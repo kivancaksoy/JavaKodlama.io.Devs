@@ -1,20 +1,18 @@
 package kodlama.io.Kodlama.io.Devs.business.concretes;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import kodlama.io.Kodlama.io.Devs.business.abstracts.TechnologyService;
 import kodlama.io.Kodlama.io.Devs.business.requests.CreateTechnologyRequest;
-import kodlama.io.Kodlama.io.Devs.business.requests.DeleteTechnologyRequest;
 import kodlama.io.Kodlama.io.Devs.business.requests.UpdateTechnologyRequest;
+import kodlama.io.Kodlama.io.Devs.business.responses.CreatedTechnologyResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.GetAllTechnologiesResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.GetByIdTechnologyResponse;
-import kodlama.io.Kodlama.io.Devs.dataAccess.abstracts.ProgrammingLanguageRepository;
+import kodlama.io.Kodlama.io.Devs.business.responses.UpdatedTechnologyResponse;
+import kodlama.io.Kodlama.io.Devs.core.utilities.mapper.ModelMapperService;
 import kodlama.io.Kodlama.io.Devs.dataAccess.abstracts.TechnologyRepository;
-import kodlama.io.Kodlama.io.Devs.entities.concretes.ProgrammingLanguage;
 import kodlama.io.Kodlama.io.Devs.entities.concretes.Technology;
 import lombok.AllArgsConstructor;
 
@@ -24,70 +22,59 @@ public class TechnologyManager implements TechnologyService {
 
 	
 	private TechnologyRepository technologyRepository;
-	private ProgrammingLanguageRepository programmingLanguageRepository;
+	private ModelMapperService modelMapperService;
 	
 	@Override
-	public void add(CreateTechnologyRequest createTechnologyRequest) {
-		Technology technology = new Technology();
-		Optional<ProgrammingLanguage> optionalProgrammingLanguage =
-				programmingLanguageRepository.findById(createTechnologyRequest.getProgrammingLanguageId());
-		
-		technology.setName(createTechnologyRequest.getName());
-		technology.setProgrammingLanguage(optionalProgrammingLanguage.get());
-		
-		technologyRepository.save(technology);
-	}
-
-	@Override
-	public void update(UpdateTechnologyRequest updateTechnologyRequest) {
+	public CreatedTechnologyResponse add(CreateTechnologyRequest createTechnologyRequest) {
 		Technology technology = 
-				technologyRepository.findById(
-						updateTechnologyRequest.getId()).orElseThrow(() -> 
-	    				new RuntimeException("Technology not found"));
-		Optional<ProgrammingLanguage> optionalProgrammingLanguage =
-				programmingLanguageRepository.findById(updateTechnologyRequest.getProgrammingLanguageId());
+				modelMapperService.forRequest().map(createTechnologyRequest, Technology.class);
+		Technology createdTechnology = technologyRepository.save(technology);
 		
-		technology.setName(updateTechnologyRequest.getName());
-		technology.setProgrammingLanguage(optionalProgrammingLanguage.get());	
+		CreatedTechnologyResponse createdTechnologyResponse = 
+				modelMapperService.forResponse().map(createdTechnology, CreatedTechnologyResponse.class);
 		
-		technologyRepository.save(technology);
+		return createdTechnologyResponse;
+		
 	}
 
 	@Override
-	public void delete(DeleteTechnologyRequest deleteTechnologyRequest) {
-		Technology technology = new Technology();
-		technology.setId(deleteTechnologyRequest.getId());
+	public UpdatedTechnologyResponse update(UpdateTechnologyRequest updateTechnologyRequest) {
+		Technology technology = 
+				modelMapperService.forRequest().map(updateTechnologyRequest, Technology.class);
+		Technology updatedTechnology = technologyRepository.save(technology);
 		
-		technologyRepository.delete(technology);
+		UpdatedTechnologyResponse updatedTechnologyResponse = 
+				modelMapperService.forResponse().map(updatedTechnology, UpdatedTechnologyResponse.class);
+		
+		return updatedTechnologyResponse;
+	}
+
+	@Override
+	public void delete(int id) {
+		technologyRepository.deleteById(id);
 		
 	}
 
 	@Override
 	public List<GetAllTechnologiesResponse> getAll() {
 		List<Technology> technologies = technologyRepository.findAll();
-		List<GetAllTechnologiesResponse> getAllTechnologiesResponses = 
-				new ArrayList<GetAllTechnologiesResponse>();
 		
-		for (Technology technology : technologies) {
-			GetAllTechnologiesResponse response = new GetAllTechnologiesResponse();
-			response.setId(technology.getId());
-			response.setName(technology.getName());
-			response.setProgrammingLAnguageName(technology.getProgrammingLanguage().getName());
-			
-			getAllTechnologiesResponses.add(response);
-		}
+		List<GetAllTechnologiesResponse> getAllTechnologiesResponses =
+				technologies.stream().map(technology -> 
+				modelMapperService.forResponse()
+				.map(technology, GetAllTechnologiesResponse.class))
+				.toList();
 		
 		return getAllTechnologiesResponses;
 	}
 
 	@Override
 	public GetByIdTechnologyResponse getById(int id) {
-		Optional<Technology> technologyOptional =
-				technologyRepository.findById(id);
-		GetByIdTechnologyResponse getByIdTechnologyResponse = new GetByIdTechnologyResponse();
-		getByIdTechnologyResponse.setId(technologyOptional.get().getId());
-		getByIdTechnologyResponse.setName(technologyOptional.get().getName());
-		getByIdTechnologyResponse.setProgrammingLanguageName(technologyOptional.get().getProgrammingLanguage().getName());;
+		Technology technology =
+				technologyRepository.findById(id).orElseThrow(() -> 
+					new RuntimeException("Technology not found"));
+		GetByIdTechnologyResponse getByIdTechnologyResponse =
+				modelMapperService.forResponse().map(technology, GetByIdTechnologyResponse.class);
 		
 		return getByIdTechnologyResponse;
 	}
