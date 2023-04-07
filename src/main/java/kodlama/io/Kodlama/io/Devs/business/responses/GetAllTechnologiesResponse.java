@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetAllTechnologiesResponse {
 	private int id;
-	private String programmingLAnguageName;
+	private String programmingLanguageName;
 	private String name;
 }
