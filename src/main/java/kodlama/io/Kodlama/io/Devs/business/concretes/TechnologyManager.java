@@ -11,7 +11,7 @@ import kodlama.io.Kodlama.io.Devs.business.responses.CreatedTechnologyResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.GetAllTechnologiesResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.GetByIdTechnologyResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.UpdatedTechnologyResponse;
-import kodlama.io.Kodlama.io.Devs.core.utilities.mapper.ModelMapperService;
+import kodlama.io.Kodlama.io.Devs.core.utilities.mappers.ModelMapperService;
 import kodlama.io.Kodlama.io.Devs.dataAccess.abstracts.TechnologyRepository;
 import kodlama.io.Kodlama.io.Devs.entities.concretes.Technology;
 import lombok.AllArgsConstructor;

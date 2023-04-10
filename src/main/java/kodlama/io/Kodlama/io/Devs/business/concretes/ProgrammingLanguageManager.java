@@ -2,6 +2,7 @@ package kodlama.io.Kodlama.io.Devs.business.concretes;
 
 import java.util.List;
 
+import kodlama.io.Kodlama.io.Devs.business.rules.ProgrammingLanguageBusinessRules;
 import org.springframework.stereotype.Service;
 
 import kodlama.io.Kodlama.io.Devs.business.abstracts.ProgrammingLanguageService;
@@ -11,7 +12,7 @@ import kodlama.io.Kodlama.io.Devs.business.responses.CreatedProgrammingLanguageR
 import kodlama.io.Kodlama.io.Devs.business.responses.GetAllProgrammingLanguagesResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.GetByIdProgrammingLanguageResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.UpdatedProgrammingLanguageResponse;
-import kodlama.io.Kodlama.io.Devs.core.utilities.mapper.ModelMapperService;
+import kodlama.io.Kodlama.io.Devs.core.utilities.mappers.ModelMapperService;
 import kodlama.io.Kodlama.io.Devs.dataAccess.abstracts.ProgrammingLanguageRepository;
 import kodlama.io.Kodlama.io.Devs.entities.concretes.ProgrammingLanguage;
 import lombok.AllArgsConstructor;
@@ -22,10 +23,13 @@ public class ProgrammingLanguageManager implements ProgrammingLanguageService {
 
 	private ProgrammingLanguageRepository programmingLanguageRepository;
 	private ModelMapperService modelMapperService;
+	private ProgrammingLanguageBusinessRules programmingLanguageBusinessRules;
 
 
 	@Override
 	public CreatedProgrammingLanguageResponse add(CreateProgrammingLanguageRequest createProgrammingLanguageRequest) {
+		programmingLanguageBusinessRules.checkIfProgrammingLanguageExists(createProgrammingLanguageRequest.getName());
+
 		ProgrammingLanguage programmingLanguage = 
 	    		modelMapperService.forRequest().map(createProgrammingLanguageRequest, ProgrammingLanguage.class);
 	    ProgrammingLanguage createdProgrammingLanguage =
