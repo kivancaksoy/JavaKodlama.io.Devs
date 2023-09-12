@@ -4,14 +4,15 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
-
 @Service
-@AllArgsConstructor
 public class ModelMapperManager implements ModelMapperService{
 	
-	private ModelMapper modelMapper;
-	
+	private final ModelMapper modelMapper;
+
+	public ModelMapperManager(ModelMapper modelMapper) {
+		this.modelMapper = modelMapper;
+	}
+
 	@Override
 	public ModelMapper forRequest() {
 		modelMapper.getConfiguration()

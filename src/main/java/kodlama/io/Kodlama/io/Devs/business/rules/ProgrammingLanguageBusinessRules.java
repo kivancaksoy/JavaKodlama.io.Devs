@@ -2,13 +2,15 @@ package kodlama.io.Kodlama.io.Devs.business.rules;
 
 import kodlama.io.Kodlama.io.Devs.core.utilities.exceptions.BusinessException;
 import kodlama.io.Kodlama.io.Devs.dataAccess.abstracts.ProgrammingLanguageRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@AllArgsConstructor
 @Service
 public class ProgrammingLanguageBusinessRules {
-    private ProgrammingLanguageRepository programmingLanguageRepository;
+    private final ProgrammingLanguageRepository programmingLanguageRepository;
+
+    public ProgrammingLanguageBusinessRules(ProgrammingLanguageRepository programmingLanguageRepository) {
+        this.programmingLanguageRepository = programmingLanguageRepository;
+    }
 
     public void checkIfProgrammingLanguageExists(String name) {
         if (programmingLanguageRepository.existsByName(name)) {

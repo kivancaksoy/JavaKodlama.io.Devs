@@ -3,7 +3,6 @@ package kodlama.io.Kodlama.io.Devs.webApi.controllers;
 import java.util.List;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,17 +21,18 @@ import kodlama.io.Kodlama.io.Devs.business.responses.CreatedProgrammingLanguageR
 import kodlama.io.Kodlama.io.Devs.business.responses.GetAllProgrammingLanguagesResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.GetByIdProgrammingLanguageResponse;
 import kodlama.io.Kodlama.io.Devs.business.responses.UpdatedProgrammingLanguageResponse;
-import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/programminglanguages")
-@AllArgsConstructor
 public class ProgrammingLanguagesController {
 
-	@Autowired
-	private ProgrammingLanguageService programmingLanguageService;
+	private final ProgrammingLanguageService programmingLanguageService;
 
-	
+	public ProgrammingLanguagesController(ProgrammingLanguageService programmingLanguageService) {
+		this.programmingLanguageService = programmingLanguageService;
+	}
+
+
 	@GetMapping("/getall")
 	@ResponseStatus(code=HttpStatus.OK)
 	public List<GetAllProgrammingLanguagesResponse> getAll(){

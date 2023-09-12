@@ -18,13 +18,17 @@ import kodlama.io.Kodlama.io.Devs.entities.concretes.ProgrammingLanguage;
 import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class ProgrammingLanguageManager implements ProgrammingLanguageService {
 
-	private ProgrammingLanguageRepository programmingLanguageRepository;
-	private ModelMapperService modelMapperService;
-	private ProgrammingLanguageBusinessRules programmingLanguageBusinessRules;
+	private final ProgrammingLanguageRepository programmingLanguageRepository;
+	private final ModelMapperService modelMapperService;
+	private final ProgrammingLanguageBusinessRules programmingLanguageBusinessRules;
 
+	public ProgrammingLanguageManager(ProgrammingLanguageRepository programmingLanguageRepository, ModelMapperService modelMapperService, ProgrammingLanguageBusinessRules programmingLanguageBusinessRules) {
+		this.programmingLanguageRepository = programmingLanguageRepository;
+		this.modelMapperService = modelMapperService;
+		this.programmingLanguageBusinessRules = programmingLanguageBusinessRules;
+	}
 
 	@Override
 	public CreatedProgrammingLanguageResponse add(CreateProgrammingLanguageRequest createProgrammingLanguageRequest) {

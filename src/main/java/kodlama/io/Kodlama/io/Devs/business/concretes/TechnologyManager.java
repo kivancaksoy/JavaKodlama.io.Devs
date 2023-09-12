@@ -14,16 +14,19 @@ import kodlama.io.Kodlama.io.Devs.business.responses.UpdatedTechnologyResponse;
 import kodlama.io.Kodlama.io.Devs.core.utilities.mappers.ModelMapperService;
 import kodlama.io.Kodlama.io.Devs.dataAccess.abstracts.TechnologyRepository;
 import kodlama.io.Kodlama.io.Devs.entities.concretes.Technology;
-import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class TechnologyManager implements TechnologyService {
 
 	
-	private TechnologyRepository technologyRepository;
-	private ModelMapperService modelMapperService;
-	
+	private final TechnologyRepository technologyRepository;
+	private final ModelMapperService modelMapperService;
+
+	public TechnologyManager(TechnologyRepository technologyRepository, ModelMapperService modelMapperService) {
+		this.technologyRepository = technologyRepository;
+		this.modelMapperService = modelMapperService;
+	}
+
 	@Override
 	public CreatedTechnologyResponse add(CreateTechnologyRequest createTechnologyRequest) {
 		Technology technology = 
